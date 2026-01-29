@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Verified Goldsky datasets - these have been tested and confirmed to work",
+  "lastUpdated": "2025-01-29",
+  "datasets": {
+    "erc20_transfers": {
+      "description": "ERC-20 token transfers",
+      "useCase": "Token tracking, DeFi analytics, wallet monitoring",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true },
+        "base": { "version": "1.2.0", "startAtSupport": true },
+        "matic": { "version": "1.0.0", "startAtSupport": true },
+        "arbitrum": { "version": "1.0.0", "startAtSupport": true },
+        "optimism": { "version": "1.0.0", "startAtSupport": true },
+        "bsc": { "version": "1.0.0", "startAtSupport": true },
+        "avalanche": { "version": "1.0.0", "startAtSupport": true }
+      },
+      "schema": {
+        "id": "string",
+        "sender": "string",
+        "recipient": "string",
+        "amount": "string",
+        "address": "string (token contract)",
+        "block_number": "integer",
+        "block_timestamp": "integer",
+        "transaction_hash": "string"
+      }
+    },
+    "erc721_transfers": {
+      "description": "ERC-721 NFT transfers",
+      "useCase": "NFT marketplaces, ownership tracking, collection analytics",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true },
+        "base": { "version": "1.0.0", "startAtSupport": true },
+        "matic": { "version": "1.0.0", "startAtSupport": true }
+      },
+      "schema": {
+        "id": "string",
+        "from_address": "string",
+        "to_address": "string",
+        "token_id": "string",
+        "address": "string (NFT contract)",
+        "block_number": "integer",
+        "block_timestamp": "integer",
+        "transaction_hash": "string"
+      }
+    },
+    "raw_transactions": {
+      "description": "Raw transaction data (NOT 'transactions')",
+      "useCase": "Wallet activity, gas analysis, transaction monitoring",
+      "warning": "Use 'raw_transactions' not 'transactions'",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true },
+        "base": { "version": "1.0.0", "startAtSupport": true },
+        "matic": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "logs": {
+      "description": "Event logs from smart contracts",
+      "useCase": "Custom event filtering, contract monitoring",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true },
+        "base": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "raw_logs": {
+      "description": "Raw event logs (alternative to 'logs')",
+      "useCase": "Same as logs, check availability per chain",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "blocks": {
+      "description": "Block headers and metadata",
+      "useCase": "Block explorers, timing analysis, chain health",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true },
+        "base": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "raw_blocks": {
+      "description": "Raw block data (alternative to 'blocks')",
+      "useCase": "Same as blocks, check availability per chain",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "traces": {
+      "description": "Internal transactions and call traces",
+      "useCase": "MEV analysis, contract interactions, deep transaction analysis",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true }
+      }
+    },
+    "decoded_logs": {
+      "description": "ABI-decoded event logs",
+      "useCase": "Specific contract events with human-readable data",
+      "chains": {
+        "ethereum": { "version": "1.0.0", "startAtSupport": true }
+      }
+    }
+  },
+  "solana": {
+    "token_transfers": {
+      "description": "SPL token transfers on Solana",
+      "version": "1.0.0",
+      "datasetName": "solana.token_transfers",
+      "useCase": "Token tracking on Solana",
+      "note": "Uses start_block (slot number) instead of start_at"
+    },
+    "transactions": {
+      "description": "Solana transactions",
+      "version": "1.0.0",
+      "datasetName": "solana.transactions"
+    },
+    "blocks": {
+      "description": "Solana block/slot data",
+      "version": "1.0.0",
+      "datasetName": "solana.blocks"
+    }
+  }
+}
