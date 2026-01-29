@@ -752,7 +752,7 @@ goldsky turbo validate my-pipeline.yaml
 goldsky turbo apply my-pipeline.yaml -i
 ```
 
-**Template location:** `.claude/skills/turbo-pipelines/templates/`
+**Template location:** `templates/` (relative to this skill's directory)
 
 ---
 

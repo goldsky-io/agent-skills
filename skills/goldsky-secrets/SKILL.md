@@ -123,7 +123,7 @@ Run `goldsky secret list` to confirm creation.
 | OpenSearch    | `opensearch.json`    | `opensearch`    | Search/analytics                |
 | Webhook       | `webhook.json`       | `httpauth`      | HTTP endpoints                  |
 
-**Schema location:** `.claude/skills/goldsky-secrets/schemas/`
+**Schema location:** `schemas/` (relative to this skill's directory)
 
 ### Quick Reference Examples
 

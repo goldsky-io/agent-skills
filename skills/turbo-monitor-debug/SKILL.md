@@ -416,7 +416,7 @@ After checking, provide a summary:
 | --------------------- | -------------------------------------------------- |
 | `error-patterns.json` | All known error patterns with causes and solutions |
 
-**Data location:** `.claude/skills/turbo-monitor-debug/data/`
+**Data location:** `data/` (relative to this skill's directory)
 
 ### Log Analysis Script
 

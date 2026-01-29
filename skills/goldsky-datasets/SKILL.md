@@ -81,7 +81,7 @@ If validation fails with "Dataset not found", try alternate naming (see Verified
 | `verified-datasets.json` | All validated datasets with versions, schemas, and use cases |
 | `chain-prefixes.json`    | All chain prefixes, chain IDs, and common mistakes           |
 
-**Data location:** `.claude/skills/goldsky-datasets/data/`
+**Data location:** `data/` (relative to this skill's directory)
 
 ---
 
