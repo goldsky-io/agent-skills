@@ -34,7 +34,12 @@ Ask the user about:
 
 ### Step 2: Recommend an Architecture
 
-Use the patterns and decision guides below to recommend a pipeline architecture. Reference the existing pipeline configs in the repo as examples when relevant.
+Use the patterns and decision guides below to recommend a pipeline architecture. Reference the templates in `templates/` as starting points:
+
+- `templates/linear-pipeline.yaml` — Simple decode → filter → sink
+- `templates/fan-out-pipeline.yaml` — One source → multiple sinks
+- `templates/fan-in-pipeline.yaml` — Multiple events → UNION ALL → sink
+- `templates/multi-chain-templated.yaml` — Per-chain pipeline pattern
 
 ### Step 3: Hand Off to Implementation Skills
 
@@ -72,7 +77,7 @@ Use `type: kafka` when consuming from a Goldsky-managed Kafka topic, typically f
 sources:
   my_source:
     type: kafka
-    topic: linea.raw.latest_balances_v2
+    topic: base.raw.latest_balances_v2
 ```
 
 **Best for:** Balance snapshots, latest state data, high-volume continuous streams.
@@ -107,7 +112,7 @@ source → transform_a → transform_b → sink
 
 **Use when:** You have a single data source, single destination, and straightforward processing (decode, filter, reshape).
 
-**Example:** `prod-polymarket-trades.yaml` — raw logs → decode → extract OrderFilled → postgres
+**Example:** `templates/linear-pipeline.yaml` — raw logs → decode → extract trade events → postgres
 
 **Resource size:** `s` or `m`
 
@@ -123,7 +128,7 @@ source ──────┤
 
 **Use when:** You need different views or subsets of the same data going to different destinations — e.g., balances to a warehouse AND token metadata to a webhook.
 
-**Example:** `rainbow/linea-balance-streamling.yaml` — one Kafka source → fungible balances to ClickHouse + token metadata to a Lambda webhook
+**Example:** `templates/fan-out-pipeline.yaml` — one Kafka source → fungible balances to ClickHouse + all tokens to a webhook
 
 ```yaml
 transforms:
@@ -131,15 +136,15 @@ transforms:
     type: sql
     primary_key: id
     sql: |
-      SELECT ... FROM my_source
-      WHERE token_type = 'ERC_20' OR token_type IS NULL
+      SELECT ... FROM latest_balances balance
+      WHERE balance.token_type = 'ERC_20' OR balance.token_type IS NULL
 
   all_tokens:
     type: sql
     primary_key: id
     sql: |
-      SELECT ... FROM my_source
-      WHERE token_type IN ('ERC_20', 'ERC_721', 'ERC_1155')
+      SELECT ... FROM latest_balances balance
+      WHERE balance.token_type IN ('ERC_20', 'ERC_721', 'ERC_1155')
 
 sinks:
   warehouse:
@@ -164,9 +169,9 @@ source → decode ┤                 ├→ UNION ALL → sink
               └→ event_type_b ──┘
 ```
 
-**Use when:** You want a unified activity feed, combining trades, redemptions, splits, merges, etc. into one table.
+**Use when:** You want a unified activity feed, combining trades, deposits, withdrawals, transfers, etc. into one table.
 
-**Example:** `prod-polymarket-dwh-activities.yaml` — one raw_logs source → decode → 9 event-type transforms → UNION ALL → ClickHouse
+**Example:** `templates/fan-in-pipeline.yaml` — one raw_logs source → decode → multiple event-type transforms → UNION ALL → ClickHouse
 
 **Resource size:** `l` (complex processing with many transforms)
 
@@ -219,15 +224,15 @@ When you need the **same pipeline logic** across multiple chains, create separat
 
 **Pattern:** Copy the pipeline YAML and swap the chain-specific values:
 
-| Field              | Chain A (linea)                    | Chain B (lisk)                    |
-| ------------------ | ---------------------------------- | --------------------------------- |
-| `name`             | `linea-balance-streaming`          | `lisk-balance-streaming`          |
-| `topic`            | `linea.raw.latest_balances_v2`     | `lisk.raw.latest_balances_v2`     |
-| Source key         | `linea_latest_balances_v2`         | `lisk_latest_balances_v2`         |
-| Transform SQL      | `'linea' as chain`                 | `'lisk' as chain`                 |
-| Sink table         | `linea_latest_fungible_balances`   | `lisk_latest_fungible_balances`   |
+| Field              | Chain A (base)                    | Chain B (arbitrum)                    |
+| ------------------ | --------------------------------- | ------------------------------------- |
+| `name`             | `base-balance-streaming`          | `arbitrum-balance-streaming`          |
+| `topic`            | `base.raw.latest_balances_v2`     | `arbitrum-one.raw.latest_balances_v2` |
+| Source key         | `base_latest_balances_v2`         | `arbitrum_latest_balances_v2`         |
+| Transform SQL      | `'base' AS chain`                 | `'arbitrum' AS chain`                 |
+| Sink table         | `base_token_balances`             | `arbitrum_token_balances`             |
 
-**Real examples:** `rainbow/linea-balance-streamling.yaml` and `rainbow/lisk-balance-streamling.yaml` — identical structure, just chain name swapped.
+**Example:** `templates/multi-chain-templated.yaml` — shows the base chain version; duplicate for each chain.
 
 **When to use templated vs multi-source:**
 
@@ -324,10 +329,10 @@ A pipeline should ideally do **one logical thing**:
 
 | Pipeline                        | Focus                               |
 | ------------------------------- | ----------------------------------- |
-| `prod-polymarket-trades`        | Trade events → Postgres             |
-| `prod-polymarket-dwh-activities`| All activity types → ClickHouse DWH |
-| `prod-polymarket-balances`      | Token balances → Postgres           |
-| `linea-balance-streaming`       | Linea balances → ClickHouse + webhook |
+| `dex-trades`                    | Trade events → Postgres             |
+| `dex-activities`                | All activity types → ClickHouse DWH |
+| `token-balances`                | Token balances → Postgres           |
+| `base-balance-streaming`        | Base balances → ClickHouse + webhook |
 
 Even though trades are a subset of activities, they're separate pipelines because they serve different consumers (application DB vs data warehouse).
 

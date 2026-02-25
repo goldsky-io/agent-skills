@@ -175,7 +175,7 @@ WHERE address = lower('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
 
 Useful for constructing composite primary keys from multiple fields:
 ```sql
-CONCAT('linea', '-', COALESCE(balance.contract_address, ''), '-', balance.owner_address) AS id
+CONCAT('base', '-', COALESCE(balance.contract_address, ''), '-', balance.owner_address) AS id
 ```
 
 ### `COALESCE()` — Null-Safe Values
