@@ -451,4 +451,4 @@ With the structured JSON format, most special characters in passwords work witho
 ## Related Skills
 
 - [goldsky-auth-setup](../goldsky-auth-setup/) - **Invoke this if user is not logged in**
-- [turbo-deploy-pipeline](../turbo-deploy-pipeline/) - Deploy pipelines that use secrets
+- [turbo-pipelines](../turbo-pipelines/) - Deploy pipelines that use secrets
