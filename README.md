@@ -1,90 +1,88 @@
-# Goldsky Agent Skills
+# Goldsky Agent
 
-Workflow-based AI skills for the Goldsky CLI and Turbo pipelines. These skills guide AI assistants through complex blockchain data tasks like deploying pipelines, managing secrets, and debugging issues.
-
-## Supported Tools
-
-These skills work with AI assistants that support the SKILL.md format:
-
-- **Claude Code** - Copy skills to `.claude/skills/` in your project
-- **Cursor** - Copy skills to `.cursor/skills/` in your project
-- **Other AI IDEs** - Check your tool's documentation for skill/agent support
+AI skills for streaming real-time blockchain data to your infrastructure. Build, deploy, and debug data pipelines that index onchain events from 130+ chains into PostgreSQL, ClickHouse, Kafka, and more.
 
 ## Installation
 
-### Manual Installation
+### Option 1: Claude Code Plugin (Recommended)
 
-Copy the skills you need to your project's skills directory:
+Install via the plugin marketplace. This is the recommended method — it handles version control and delivers updates automatically so your skills stay current.
 
-```bash
-# For Claude Code
-cp -r agent-skills/skills/* .claude/skills/
-
-# For Cursor
-cp -r agent-skills/skills/* .cursor/skills/
+```
+/plugin marketplace add goldsky-io/goldsky-agent
+/plugin install goldsky@goldsky-agent
 ```
 
-Skills are automatically discovered by the AI assistant when placed in the appropriate directory.
+### Option 2: Load from Local Directory
+
+Clone the repo and point Claude Code at it directly. You'll need to `git pull` manually to get updates.
+
+```bash
+git clone https://github.com/goldsky-io/goldsky-agent.git
+claude --plugin-dir ./goldsky-agent
+```
+
+### Option 3: Copy Skills Directly
+
+Copy the skills into your project's skills directory. Works with any AI tool that supports the [SKILL.md](https://agentskills.io) format (Claude Code, Cursor, etc.). You'll need to re-copy to get updates.
+
+```bash
+git clone https://github.com/goldsky-io/goldsky-agent.git
+
+# Claude Code
+cp -r goldsky-agent/skills/* .claude/skills/
+
+# Cursor
+cp -r goldsky-agent/skills/* .cursor/skills/
+```
 
 ## Available Skills
 
-| Skill                 | Description                                            |
-| --------------------- | ------------------------------------------------------ |
-| `goldsky-auth-setup`  | Install CLI, login, and project setup                  |
-| `goldsky-datasets`    | Discover available blockchain datasets and chains      |
-| `goldsky-secrets`     | Manage credentials for sinks (PostgreSQL, Kafka, etc.) |
-| `turbo-pipelines`     | Create, configure, and update Turbo pipelines          |
-| `turbo-lifecycle`     | List and delete pipelines                              |
-| `turbo-monitor-debug` | Monitor pipelines and debug issues                     |
+| Skill                 | Description                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------- |
+| `goldsky-auth-setup`  | Install CLI, login, and project setup                                                           |
+| `goldsky-datasets`    | Discover available blockchain datasets and chains (EVM, Solana, Bitcoin, Stellar, Sui, and more) |
+| `goldsky-secrets`     | Manage credentials for sinks (PostgreSQL, Kafka, ClickHouse, etc.)                              |
+| `turbo-pipelines`     | Create, configure, and deploy Turbo pipelines (streaming and job mode)                          |
+| `turbo-lifecycle`     | List, delete, pause, resume, and restart pipelines (streaming and job mode)                     |
+| `turbo-monitor-debug` | Monitor pipelines, view logs, inspect live data, and debug issues                               |
+| `turbo-architecture`  | Design pipeline data flows, choose streaming vs job mode, and select sinks                      |
+| `turbo-transforms`    | Write SQL, TypeScript, dynamic table, and handler transforms                                    |
 
 ## Usage
 
-Skills are invoked in your AI assistant's chat interface. You can either:
-
-**1. Invoke by name:**
-
-```
-/turbo-pipelines
-/goldsky-datasets
-```
-
-**2. Describe what you want (natural language):**
+You can invoke skills by name or just describe what you want in natural language:
 
 > "Help me deploy a pipeline that reads ERC20 transfers from Base and writes to PostgreSQL"
 
 > "What blockchain datasets does Goldsky support?"
 
-> "Create a secret for my ClickHouse database"
-
-**3. Ask for help:**
-
 > "I'm getting an error in my pipeline logs, can you help debug?"
 
+> "I need a TypeScript transform to categorize transactions by value"
+
+> "Help me set up a dynamic table to filter by a wallet allowlist"
+
+> "Should I use streaming or job mode for my backfill?"
+
 The AI will automatically use the appropriate skill based on your request.
+
+## What's Covered
+
+These skills cover the full Goldsky Turbo pipeline surface:
+
+- **Sources** — 130+ chain datasets (EVM, Solana, Bitcoin, Stellar, Sui, NEAR, Starknet, Fogo), source-level filtering, bounded ranges
+- **Transforms** — SQL (DataFusion), TypeScript/WASM scripts, dynamic tables (postgres/in-memory), external HTTP handlers, Solana-specific decoders
+- **Sinks** — PostgreSQL, PostgreSQL Aggregate, ClickHouse, Kafka, S3, Webhook, S2, Blackhole (testing)
+- **Modes** — Streaming (continuous) and Job (one-time batch with `end_block`)
+- **Lifecycle** — Deploy, list, pause, resume, restart, delete
+- **Monitoring** — Live inspect TUI, log analysis, error pattern matching
 
 ## Prerequisites
 
 **None required!** The skills will guide you through setup if needed.
 
-The `goldsky-auth-setup` skill helps you:
-
-- Install the Goldsky CLI
-- Install the Turbo CLI extension
-- Log in and select a project
-
-Just ask your AI assistant to help you get started, and it will walk you through the entire setup process.
-
-## Skill Structure
-
-Each skill contains:
-
-```
-skill-name/
-├── SKILL.md           # Main skill instructions
-├── templates/         # YAML templates, code snippets (optional)
-├── scripts/           # Helper scripts (optional)
-└── data/              # Reference data, schemas (optional)
-```
+The `goldsky-auth-setup` skill helps you install the Goldsky CLI, log in, and select a project.
 
 ## Documentation
 
