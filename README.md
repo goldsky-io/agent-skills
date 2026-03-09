@@ -1,3 +1,9 @@
+# [Archived - Not Receiving Updates]
+
+For Goldsky Skills please visit https://github.com/goldsky-io/goldsky-agent.
+
+---------------------------------
+
 # Goldsky Agent Skills
 
 Workflow-based AI skills for the Goldsky CLI and Turbo pipelines. These skills guide AI assistants through complex blockchain data tasks like deploying pipelines, managing secrets, and debugging issues.
